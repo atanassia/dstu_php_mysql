@@ -1,0 +1,28 @@
+@font-face {
+	font-family: 'Montserrat'; 
+	src: url(Montserrat-Regular.ttf); 
+}
+
+body {
+    font-family: 'Montserrat' !important;
+    color: #404040;
+    font-family: 'Montserrat', serif;
+    font-size: 90%;
+    line-height: 1.8em;
+}
+
+footer{
+    color:white;
+}
+
+ul li{
+    list-style: none;
+}
+
+.sidebar ul > li:before {
+    content: "-";
+    font-size: 15px;
+    color:#0dcaf0 ;
+    position: absolute;
+    margin-left: -1.1em; 
+}
