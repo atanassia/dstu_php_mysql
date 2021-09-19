@@ -5,6 +5,6 @@
     $sql = 'DELETE FROM ' . $table_name . ' WHERE id = ' . $id . '';
     $statement = $connection->prepare($sql);
     if ($statement->execute()) {
-        header("Location: /");
+        header("Location: data_output.php?table_name=$table_name");
     }
 ?>

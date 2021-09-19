@@ -99,7 +99,7 @@
                                         <td><?= $Row; ?></td>
                                     <?php endforeach; ?>
                                     <td>
-                                        <a href="edit.php?table_name=<?= $table_name; ?>&id=<?= $data->id ?>" class="btn">
+                                        <a href="edit.php?table_name=<?= $table_name; ?>&id=<?= $data->id ?>" class="btn create_a">
                                             <img alt="" class="" src="/templates/icons/edit.svg">
                                         </a>
                                         <a onclick="return confirm('Вы точно хотите удалить запись?')" href="delete.php?table_name=<?= $table_name; ?>&id=<?= $data->id ?>" class='btn'>
