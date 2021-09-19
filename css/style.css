@@ -19,6 +19,19 @@ ul li{
     list-style: none;
 }
 
+a{
+    text-decoration: none !important;
+    color: #404040 !important;
+}
+
+.btn{
+    padding: 0 !important;
+}
+
+.create_button{
+    display: block;
+}
+
 .sidebar ul > li:before {
     content: "-";
     font-size: 15px;
