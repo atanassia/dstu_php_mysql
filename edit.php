@@ -72,11 +72,21 @@
             $full_name = $_POST['full_name'];
             $birth_date = $_POST['birth_date'];
             $death_date = $_POST['death_date'];
-            $sql = 'UPDATE authors SET full_name = :full_name, birth_date = :birth_date, death_date = :death_date WHERE id = :id';
-            $statement = $connection->prepare($sql);
-            if ($statement->execute([':full_name' => $full_name, ':birth_date' => $birth_date, ':death_date' => $death_date, ':id' => $id])){
-                $message = 'Данные успешно изменены';
+            if($death_date == NULL){
+                $sql = 'UPDATE authors SET full_name = :full_name, birth_date = :birth_date WHERE id = :id';
+                $statement = $connection->prepare($sql);
+                if ($statement->execute([':full_name' => $full_name, ':birth_date' => $birth_date, ':id' => $id])){
+                    $message = 'Данные успешно изменены';
+                }
             }
+            else{
+                $sql = 'UPDATE authors SET full_name = :full_name, birth_date = :birth_date, death_date = :death_date WHERE id = :id';
+                $statement = $connection->prepare($sql);
+                if ($statement->execute([':full_name' => $full_name, ':birth_date' => $birth_date, ':death_date' => $death_date, ':id' => $id])){
+                    $message = 'Данные успешно изменены';
+                }
+            }
+
         }
     }
     elseif ($table_name == 'depts'){
@@ -202,12 +212,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 
     <script>
-
-
-            <?php for ($i = 0; $i < count($col_array); $i++): ?>
-                document.getElementById('<?= $col_array[$i]; ?>').value = '<?= $data_array[$i]; ?>';
-            <?php endfor; ?>
-
+<?php for ($i = 0; $i < count($col_array); $i++): ?>
+    <?php if($data_array[$i] == ''): ?>
+document.getElementById('<?= $col_array[$i]; ?>').value = 'NULL';
+    <?php else: ?>
+document.getElementById('<?= $col_array[$i]; ?>').value = '<?= $data_array[$i]; ?>';
+    <?php endif; ?>
+<?php endfor; ?>
     </script>
 </body>
 </html>

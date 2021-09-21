@@ -7,20 +7,24 @@
     $statement_all_table_data_col -> execute();
     $table_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
 
-    $sql_table_data_col = 'SELECT id, genrename FROM genres';
-    $statement_all_table_data_col = $connection -> prepare($sql_table_data_col);
-    $statement_all_table_data_col -> execute();
-    $genres_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
+    if ($table_name == 'books'){
+        $sql_table_data_col = 'SELECT id, genrename FROM genres';
+        $statement_all_table_data_col = $connection -> prepare($sql_table_data_col);
+        $statement_all_table_data_col -> execute();
+        $genres_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
 
-    $sql_table_data_col = 'SELECT id, full_name FROM authors';
-    $statement_all_table_data_col = $connection -> prepare($sql_table_data_col);
-    $statement_all_table_data_col -> execute();
-    $authors_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
+        $sql_table_data_col = 'SELECT id, full_name FROM authors';
+        $statement_all_table_data_col = $connection -> prepare($sql_table_data_col);
+        $statement_all_table_data_col -> execute();
+        $authors_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
+    }
 
-    $sql_table_data_col = 'SELECT * FROM depts';
-    $statement_all_table_data_col = $connection -> prepare($sql_table_data_col);
-    $statement_all_table_data_col -> execute();
-    $depts_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
+    if ($table_name == 'emps'){
+        $sql_table_data_col = 'SELECT * FROM depts';
+        $statement_all_table_data_col = $connection -> prepare($sql_table_data_col);
+        $statement_all_table_data_col -> execute();
+        $depts_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
+    }
 ?>
 
 <?php 
@@ -159,6 +163,7 @@
                         <div class="mt-5">
                             <button class="btn btn-outline-primary w-50" type="submit">Создать запись</button>
                         </div>
+                        
                         </div>
                     </form>
                 </div>

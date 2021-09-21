@@ -7,8 +7,12 @@ body {
     font-family: 'Montserrat' !important;
     color: #404040;
     font-family: 'Montserrat', serif;
-    font-size: 90%;
+    font-size: 100% !important;
     line-height: 1.8em;
+}
+
+.search_data, .search_data .form-control, .search_data .form-select{
+    font-size:80% !important;
 }
 
 footer{
@@ -19,18 +23,15 @@ ul li{
     list-style: none;
 }
 
-a{
+main a{
     text-decoration: none !important;
     color: #404040 !important;
 }
 
-.create_a{
+.btn_create_delete{
     padding: 0 !important;
 }
 
-.create_button{
-    display: block;
-}
 
 .sidebar ul > li:before {
     content: "-";
@@ -38,4 +39,15 @@ a{
     color:#0dcaf0 ;
     position: absolute;
     margin-left: -1.1em; 
+}
+
+.sidebar ul > li{
+    font-size: 108% !important;
+}
+
+.form-sign-up{
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
 }

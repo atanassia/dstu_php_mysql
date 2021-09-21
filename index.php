@@ -22,7 +22,7 @@
                     <?php require 'templates/sidebar.php'; ?>
                 </div>
 
-                <div class="col-9">
+                <div class="col-9 text-center">
                     <h1>Начало работы</h1> 
                 </div>
             </div>
@@ -36,6 +36,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 </body>
 </html>
-
-<!-- 
-SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'; -->

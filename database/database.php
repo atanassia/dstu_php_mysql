@@ -6,6 +6,7 @@
 
     try{
         $connection = new PDO($dsn, $username, $password, $options);
+        // echo "Соединение установлено: ";
     }catch (PDOException $e) {
         echo "Соединение не установлено: " . $e->getMessage();
     }
