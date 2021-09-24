@@ -1,4 +1,5 @@
 <?php
+    require 'templates/start_session.php';
     $table_name = $_GET['table_name'];
 
     require 'database/database.php';
@@ -149,57 +150,66 @@
                 </div>
 
                 <div class="col-9">
-                <?php if(!empty($message)): ?>
-                    <div class="alert alert-success">
-                        <?= $message; ?>
-                    </div>
-                <?php endif; ?>
-                    <form method="POST">
-                        <div class="text-center">
-                        <?php foreach($table_col_data as $column): ?>
-                            <?php if ( $column-> Field == 'id' ) continue; ?>
-                                <div class="row g-3 align-items-center mt-1">
-                                    <div class="col-2">
-                                        <label for="<?= $column -> Field; ?>" class="mt-3"><?= $column -> Field; ?></label>
-                                    </div>
-                                    <div class="col-10 maindata">
-                                        <?php if ( $column-> Type == 'varchar(255)' or $column-> Type == 'varchar(512)' or $column-> Type == 'varchar(256)'): ?>
-                                            <input type = "text" name="<?= $column -> Field; ?>" id="<?= $column -> Field; ?>" value = "" class="form-control" required>
-                                        <?php elseif ( $column-> Type == 'date'): ?>
-                                            <input type = "date" name="<?= $column -> Field; ?>" id="<?= $column -> Field; ?>" class="form-control">
-                                        <?php elseif ( $column-> Type == 'int' ): ?>
-                                            <?php if ( $column-> Field == 'genresId' ): ?>
-                                                <select name='<?= $column-> Field; ?>' id='<?= $column-> Field; ?>' class="form-select" required>
-                                                    <?php foreach($genres_col_data as $genre_col): ?>
-                                                        <option value="<?= $genre_col -> id; ?>"><?= $genre_col -> genrename; ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            <?php elseif ( $column-> Field == 'authorsId' ): ?>
-                                                <select name='<?= $column-> Field; ?>' id='<?= $column-> Field; ?>' class="form-select">
-                                                    <?php foreach($authors_col_data as $author_col): ?>
-                                                        <option value="<?= $author_col -> id; ?>"><?= $author_col -> full_name; ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            <?php elseif ( $column-> Field == 'deptId' ): ?>
-                                                <select name='<?= $column-> Field; ?>' id='<?= $column-> Field; ?>' class="form-select">
-                                                    <?php foreach($depts_col_data as $dept_col): ?>
-                                                        <option value="<?= $dept_col -> id; ?>"><?= $dept_col -> deptsname; ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            <?php endif ?>
-                                        <?php elseif ( $column-> Type == 'text' ): ?>
-                                            <textarea name="<?= $column -> Field; ?>" class="form-control" id="<?= $column -> Field; ?>" cols="30" rows="5" required></textarea>
-                                        <?php endif ?>
-                                    </div>
-                                </div>
-                        <?php endforeach; ?>
+                <?php if(isset($_COOKIE['status'])): ?>
+                    <?php if($_COOKIE['status'] == 1): ?>
+                        <?php if(!empty($message)): ?>
+                            <div class="alert alert-success">
+                                <?= $message; ?>
+                            </div>
+                        <?php endif; ?>
+                            <form method="POST">
+                                <div class="text-center">
+                                <?php foreach($table_col_data as $column): ?>
+                                    <?php if ( $column-> Field == 'id' ) continue; ?>
+                                        <div class="row g-3 align-items-center mt-1">
+                                            <div class="col-2">
+                                                <label for="<?= $column -> Field; ?>" class="mt-3"><?= $column -> Field; ?></label>
+                                            </div>
+                                            <div class="col-10 maindata">
+                                                <?php if ( $column-> Type == 'varchar(255)' or $column-> Type == 'varchar(512)' or $column-> Type == 'varchar(256)'): ?>
+                                                    <input type = "text" name="<?= $column -> Field; ?>" id="<?= $column -> Field; ?>" value = "" class="form-control" required>
+                                                <?php elseif ( $column-> Type == 'date'): ?>
+                                                    <input type = "date" name="<?= $column -> Field; ?>" id="<?= $column -> Field; ?>" class="form-control">
+                                                <?php elseif ( $column-> Type == 'int' ): ?>
+                                                    <?php if ( $column-> Field == 'genresId' ): ?>
+                                                        <select name='<?= $column-> Field; ?>' id='<?= $column-> Field; ?>' class="form-select" required>
+                                                            <?php foreach($genres_col_data as $genre_col): ?>
+                                                                <option value="<?= $genre_col -> id; ?>"><?= $genre_col -> genrename; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    <?php elseif ( $column-> Field == 'authorsId' ): ?>
+                                                        <select name='<?= $column-> Field; ?>' id='<?= $column-> Field; ?>' class="form-select">
+                                                            <?php foreach($authors_col_data as $author_col): ?>
+                                                                <option value="<?= $author_col -> id; ?>"><?= $author_col -> full_name; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    <?php elseif ( $column-> Field == 'deptId' ): ?>
+                                                        <select name='<?= $column-> Field; ?>' id='<?= $column-> Field; ?>' class="form-select">
+                                                            <?php foreach($depts_col_data as $dept_col): ?>
+                                                                <option value="<?= $dept_col -> id; ?>"><?= $dept_col -> deptsname; ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    <?php endif ?>
+                                                <?php elseif ( $column-> Type == 'text' ): ?>
+                                                    <textarea name="<?= $column -> Field; ?>" class="form-control" id="<?= $column -> Field; ?>" cols="30" rows="5" required></textarea>
+                                                <?php endif ?>
+                                            </div>
+                                        </div>
+                                <?php endforeach; ?>
 
-                        <div class="mt-5">
-                            <button class="btn btn-outline-primary w-50" type="submit">Изменить запись</button>
+                                <div class="mt-5">
+                                    <button class="btn btn-outline-primary w-50" type="submit">Изменить запись</button>
+                                </div>
+                                </div>
+                            </form>
                         </div>
-                        </div>
-                    </form>
-                </div>
+                        <?php else: ?>
+                        <h3 class="text-center">Недостаточно прав.</h3>
+                    <?php endif ?>
+                    
+                    <?php else: ?>
+                        <h3 class="text-center">Недостаточно прав.</h3>
+                <?php endif ?>
             </div>
         </main>
     </div>

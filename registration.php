@@ -2,21 +2,21 @@
     $message = "";
     $emailErr = $loginErr = $passwordErr = $cpasswordErr = "";
     $emailv = $passwordv = $cpasswordv = "";
-    $email = $login = $password = $cpassword = "";
+    $email = $login = $password = False;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //Validates email
         if (empty($_POST["email"])) {
             $emailErr = "Вы забыли ввести почту!";
         } 
-        else {
+        else{
             $emailv = test_input($_POST["email"]);
             // проверка валидности почты
             if (!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/",$emailv)) {
                 $emailErr = "Введен неправильный формат почты!"; 
             }
             else{
-                $email = $_POST["email"];
+                $email = True;
             }
         }
 
@@ -25,11 +25,17 @@
             $loginrErr = "Вы забыли ввести логин!";
         } 
         else {
-            $login = $_POST["login"];
+            $login = True;
         }
 
         //Validates password & confirm passwords.
-        if(!empty($_POST["password"]) && ($_POST["password"] == $_POST["cpassword"])) {
+        if(!($_POST["password"] == $_POST["cpassword"])){
+            $cpasswordErr = "Пароли не совпадают";
+        }
+        elseif(!empty($_POST["cpassword"])) {
+            $cpasswordErr = "Проверьте, ввели ли Вы подтверждение пароля!";
+        }
+        elseif(!empty($_POST["password"]) && ($_POST["password"] == $_POST["cpassword"])) {
             $passwordv = test_input($_POST["password"]);
             $cpasswordv = test_input($_POST["cpassword"]);
             if (strlen($_POST["password"]) <= '5') {
@@ -45,19 +51,9 @@
                 $passwordErr = "Ваш пароль должен содержать хотя бы одну строчную букву!";
             }
             else {
-                $password = $_POST["password"];
+                $password = True;
             }
         }
-        elseif(!($_POST["password"] == $_POST["cpassword"])){
-            $cpasswordErr = "Пароли не совпадают";
-        }
-        elseif(!empty($_POST["cpassword"])) {
-            $cpasswordErr = "Проверьте, ввели ли Вы пароль или подтверждение пароля верно!";
-        } 
-        else {
-            $password = $_POST["password"];
-        }
-    
     }
 
     function test_input($data) {
@@ -69,7 +65,10 @@
 
     require 'database/database.php';
 
-    if(!empty($login) && !empty($email) && !empty($password)){
+    if(($login && $email && $password) == True){
+        $login = $_POST["login"];
+        $password = $_POST["password"];
+        $email = $_POST["email"];
         $sql_l = 'SELECT * FROM users WHERE EXISTS (SELECT * FROM users WHERE login = :login)';
         $statement_l = $connection -> prepare($sql_l);
         $statement_l->execute([':login' => $login]);
@@ -86,6 +85,7 @@
     }
 
 ?>
+
 
 
 <!DOCTYPE html>
@@ -139,12 +139,7 @@
                                     <label for="cpassword">Подтверждение пароля</label>
                                 </div>
 
-                                <div class="checkbox mb-3 mt-3">
-                                <label>
-                                    <input type="checkbox" value="remember-me"><span class="ms-1">Запомнить меня</span>
-                                </label>
-                                </div>
-                                <button class="w-100 btn btn-md btn-success" type="submit">Отправить</button>
+                                <button class="w-100 btn btn-md btn-success mt-3" type="submit">Отправить</button>
                             </form>
                         </div>
                     </div>

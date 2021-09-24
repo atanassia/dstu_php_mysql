@@ -1,3 +1,7 @@
+<?php 
+    require 'templates/start_session.php';
+?>
+
 <!DOCTYPE html>
 <html lang="ru" class="h-100">
 <head>

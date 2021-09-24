@@ -1,4 +1,5 @@
 <?php
+    require 'templates/start_session.php';
     $table_name = $_GET['table_name'];
 
     require 'database/database.php';
@@ -79,21 +80,30 @@
             $sql_table_data = 'SELECT books.id, booksname, description, release_date, full_name, genrename FROM books 
                     JOIN authors on books.authorsId = authors.id
                     JOIN genres on books.genresId = genres.id
-                    WHERE booksname = :booksname OR description = :description OR release_date = :release_date OR authorsId = :authorsId OR genresId = :genresId';
+                    WHERE booksname LIKE ' . $booksname . ' OR description = :description OR release_date = :release_date OR authorsId = :authorsId OR genresId = :genresId';
             $statement_all_table_data = $connection -> prepare($sql_table_data);
-            $statement_all_table_data->execute([':booksname' => $booksname, ':description' => $description, ':release_date' => $release_date, ':authorsId' => $authorsId, ':genresId' => $genresId]);
+            $statement_all_table_data->execute([':description' => $description, ':release_date' => $release_date, ':authorsId' => $authorsId, ':genresId' => $genresId]);
             $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);
         }
     }
     elseif ($table_name == 'authors'){
-        if (isset ($_POST['Имя автора']) && isset($_POST['Дата рождения']) && isset($_POST['Дата смерти'])) {
+        if ((isset ($_POST['Имя автора']) && isset($_POST['Дата рождения'])) && isset($_POST['Дата смерти'])) {
             $full_name = $_POST['Имя автора'];
             $birth_date = $_POST['Дата рождения'];
             $death_date = $_POST['Дата смерти'];
-            $sql_table_data = 'SELECT * From depts WHERE full_name = :full_name OR birth_date = :birth_date OR death_date = :death_date';
-            $statement_all_table_data = $connection -> prepare($sql_table_data);
-            if($statement_all_table_data -> execute([':full_name' => $full_name, ':birth_date' => $birth_date, ':death_date' => $death_date])){
-                $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);
+            if(empty($death_date)){
+                $sql_table_data = 'SELECT * From depts WHERE full_name LIKE ' . $full_name . ' AND birth_date = :birth_date AND death_date = :death_date';
+                $statement_all_table_data = $connection -> prepare($sql_table_data);
+                if($statement_all_table_data -> execute([':birth_date' => $birth_date, ':death_date' => $death_date])){
+                    $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);   
+                }
+            }
+            else{
+                $sql_table_data = 'SELECT * From depts WHERE full_name LIKE ' . $full_name . ' AND birth_date = :birth_date';
+                $statement_all_table_data = $connection -> prepare($sql_table_data);
+                if($statement_all_table_data -> execute([':birth_date' => $birth_date])){
+                    $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);
+                }
             }
         }
     }
@@ -108,14 +118,14 @@
         }
     }
     elseif ($table_name == 'emps'){
-        if (isset ($_POST['Имя']) && isset($_POST['Отчество']) && isset($_POST['Фамилия']) && isset($_POST['Отдел fk'])) {
+        if (isset($_POST['Имя']) && isset($_POST['Отчество']) && isset($_POST['Фамилия']) && isset($_POST['Отдел fk'])) {
             $first_name = $_POST['Имя'];
             $middle_name = $_POST['Отчество'];
             $last_name = $_POST['Фамилия'];
             $deptId = $_POST['Отдел fk'];
-            $sql_table_data = 'SELECT * From emps WHERE first_name = :first_name OR middle_name = :middle_name OR last_name = :last_name OR deptId = :deptId';
+            $sql_table_data = 'SELECT * FROM emps WHERE first_name LIKE ' . '"%' . $first_name . '%"' . ' OR middle_name LIKE ' . '"%' .  $middle_name . '%"' .  ' OR last_name LIKE ' . '"%' .  $last_name . '%"' .  ' OR deptId = :deptId';
             $statement_all_table_data = $connection -> prepare($sql_table_data);
-            if($statement_all_table_data -> execute([':first_name' => $first_name, ':middle_name' => $middle_name, ':last_name' => $last_name, ':deptId' => $deptId])){
+            if($statement_all_table_data -> execute([':deptId' => $deptId])){
                 $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);
             } 
         }
@@ -123,7 +133,7 @@
     elseif ($table_name == 'genres'){
         if (isset ($_POST['Жанр'])) {
             $genrename = $_POST['Жанр'];
-            $sql_table_data = 'SELECT * From genres WHERE genrename LIKE ' . '"%' . $genrename . '%" ';
+            $sql_table_data = 'SELECT * FROM genres WHERE genrename LIKE ' . '"%' . $genrename . '%" ';
             $statement_all_table_data = $connection -> prepare($sql_table_data);
             if($statement_all_table_data -> execute()){
                 $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);
@@ -165,7 +175,11 @@
                                 <div class="col">
                                     <?php if ($column == "Дата выпуска" or $column == "Дата рождения" or $column == "Дата смерти"): ?>
                                         <label for="<?= $column; ?>" class="mt-3"><?= $column; ?></label>
-                                        <input type = "date" name="<?= $column; ?>" id="<?= $column; ?>" class="form-control">
+                                        <?php if ($column == "Дата смерти"): ?>
+                                            <input type = "date" name="<?= $column; ?>" id="<?= $column; ?>" class="form-control">
+                                        <?php else: ?>
+                                            <input type = "date" name="<?= $column; ?>" id="<?= $column; ?>" class="form-control" required>
+                                        <?php endif; ?>
                                     <?php elseif($column == "Имя автора fk" or $column == "Жанр fk" or $column == "Отдел fk"): ?>
                                         <label for="<?= $column; ?>" class="mt-3"><?= $column; ?></label>
                                         <?php if ( $column == 'Жанр fk' ): ?>
@@ -189,7 +203,7 @@
                                         <?php endif; ?>
                                     <?php else: ?>
                                         <label for="<?= $column; ?>" class="mt-3"><?= $column; ?></label>
-                                        <input type = "text" name="<?= $column; ?>" id="<?= $column; ?>" class="form-control">
+                                        <input type = "text" name="<?= $column; ?>" id="<?= $column; ?>" class="form-control" required>
                                     <?php endif; ?>
                                 </div>
                             <?php endforeach; ?>
@@ -205,8 +219,17 @@
                                 <?php foreach($table_col_data as $column): ?>
                                     <td><?= $column; ?></td>
                                 <?php endforeach; ?>
-                                <td></td>
-                                <td></td>
+
+                               
+                                <?php if(isset($_COOKIE['status'])): ?>
+                                    <?php if($_COOKIE['status'] == 1): ?>
+                                        <td></td>
+                                        <td></td>
+                                    <?php endif ?>
+                                <?php endif ?>
+                                <?php if($table_name == 'books'): ?>
+                                    <td></td>
+                                <?php endif ?>
                             </tr>
                         </thead>
 
@@ -216,16 +239,28 @@
                                     <?php foreach($data as $Row): ?>
                                         <td><?= $Row; ?></td>
                                     <?php endforeach; ?>
-                                    <td>
-                                        <a href="edit.php?table_name=<?= $table_name; ?>&id=<?= $data->id ?>" class="btn btn_create_delete">
-                                            <img alt="" class="" src="/templates/icons/edit.svg">
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a onclick="return confirm('Вы точно хотите удалить запись?')" href="delete.php?table_name=<?= $table_name; ?>&id=<?= $data->id ?>" class='btn btn_create_delete'>
-                                            <img alt="" class="" src="/templates/icons/delete.svg">
-                                        </a>
-                                    </td>
+                                    
+                                    <?php if(isset($_COOKIE['status'])): ?>
+                                        <?php if($_COOKIE['status'] == 1): ?>
+                                            <td>
+                                                <a href="edit.php?table_name=<?= $table_name; ?>&id=<?= $data->id ?>" class="btn btn_create_delete">
+                                                    <img alt="" class="" src="/templates/icons/edit.svg">
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a onclick="return confirm('Вы точно хотите удалить запись?')" href="delete.php?table_name=<?= $table_name; ?>&id=<?= $data->id ?>" class='btn btn_create_delete'>
+                                                    <img alt="" class="" src="/templates/icons/delete.svg">
+                                                </a>
+                                            </td>
+                                        <?php endif ?>
+                                    <?php endif ?>
+                                    <?php if($table_name == 'books'): ?>
+                                        <td>
+                                            <a href="comments.php?bookId=<?= $data->id ?>" class="btn btn_create_delete">
+                                                <img alt="" class="" src="/templates/icons/comment.svg">
+                                            </a>
+                                        </td>
+                                    <?php endif ?>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
