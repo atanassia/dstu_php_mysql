@@ -27,7 +27,6 @@
             <?php endforeach; ?>
         </ul>
     
-    <!-- if ($table_name == "1972_author_birthday" or $table_name = "names_a_authors" or $table_name = "2_1972_names_a" or $table_name = "allbooks" or $table_name = "task_12") -->
     <?php if(isset($_COOKIE['username'])): ?>
         <?php if($_COOKIE['status'] == 1): ?>
             <div>

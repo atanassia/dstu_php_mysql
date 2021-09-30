@@ -32,7 +32,7 @@
         if(!($_POST["password"] == $_POST["cpassword"])){
             $cpasswordErr = "Пароли не совпадают";
         }
-        elseif(!empty($_POST["cpassword"])) {
+        elseif(!($_POST["password"] == $_POST["cpassword"])) {
             $cpasswordErr = "Проверьте, ввели ли Вы подтверждение пароля!";
         }
         elseif(!empty($_POST["password"]) && ($_POST["password"] == $_POST["cpassword"])) {
@@ -51,7 +51,25 @@
                 $passwordErr = "Ваш пароль должен содержать хотя бы одну строчную букву!";
             }
             else {
-                $password = True;
+                require 'database/database.php';
+                if(True){
+                    $login = $_POST["login"];
+                    $password = $_POST["password"];
+                    $email = $_POST["email"];
+                    $sql_l = 'SELECT * FROM users WHERE EXISTS (SELECT * FROM users WHERE login = :login)';
+                    $statement_l = $connection -> prepare($sql_l);
+                    $statement_l->execute([':login' => $login]);
+                    if($statement_l -> fetchAll(PDO::FETCH_OBJ)){
+                        $loginErr = 'Пользователь с таким логином уже существует!';
+                    }
+                    else{
+                        $sql = 'INSERT INTO users(login, email, password) VALUES(:login, :email, :password)';
+                        $statement = $connection->prepare($sql);
+                        if ($statement->execute([':login' => $login, ':email' => $email, ':password' => $password])){
+                            $message = 'Вы успешно зарегистрировались!';
+                        }
+                    }
+                }
             }
         }
     }
@@ -61,27 +79,6 @@
         $data = stripslashes($data);
         $data = htmlspecialchars($data);
         return $data;
-    }
-
-    require 'database/database.php';
-
-    if(($login && $email && $password) == True){
-        $login = $_POST["login"];
-        $password = $_POST["password"];
-        $email = $_POST["email"];
-        $sql_l = 'SELECT * FROM users WHERE EXISTS (SELECT * FROM users WHERE login = :login)';
-        $statement_l = $connection -> prepare($sql_l);
-        $statement_l->execute([':login' => $login]);
-        if($statement_l -> fetchAll(PDO::FETCH_OBJ)){
-            $loginErr = 'Пользователь с таким логином уже существует!';
-        }
-        else{
-            $sql = 'INSERT INTO users(login, email, password) VALUES(:login, :email, :password)';
-            $statement = $connection->prepare($sql);
-            if ($statement->execute([':login' => $login, ':email' => $email, ':password' => $password])){
-                $message = 'Вы успешно зарегистрировались!';
-            }
-        }
     }
 
 ?>

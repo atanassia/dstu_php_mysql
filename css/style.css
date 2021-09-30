@@ -56,7 +56,7 @@ main a{
     padding-left:100px;
 }
 
-.books_description{
+.books_description, .comment{
     text-indent: 30px;
 }
 

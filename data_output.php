@@ -87,7 +87,7 @@
         }
     }
     elseif ($table_name == 'authors'){
-        if ((isset ($_POST['Имя автора']) && isset($_POST['Дата рождения'])) && isset($_POST['Дата смерти'])) {
+        if ((isset($_POST['Имя автора']) && isset($_POST['Дата рождения'])) && isset($_POST['Дата смерти'])) {
             $full_name = $_POST['Имя автора'];
             $birth_date = $_POST['Дата рождения'];
             $death_date = $_POST['Дата смерти'];
@@ -99,7 +99,7 @@
                 }
             }
             else{
-                $sql_table_data = 'SELECT * From depts WHERE full_name LIKE ' . $full_name . ' AND birth_date = :birth_date';
+                $sql_table_data = 'SELECT * From depts WHERE full_name LIKE ' . '"%' . $full_name . '%"' . ' AND birth_date = :birth_date';
                 $statement_all_table_data = $connection -> prepare($sql_table_data);
                 if($statement_all_table_data -> execute([':birth_date' => $birth_date])){
                     $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);
@@ -123,7 +123,7 @@
             $middle_name = $_POST['Отчество'];
             $last_name = $_POST['Фамилия'];
             $deptId = $_POST['Отдел fk'];
-            $sql_table_data = 'SELECT * FROM emps WHERE first_name LIKE ' . '"%' . $first_name . '%"' . ' OR middle_name LIKE ' . '"%' .  $middle_name . '%"' .  ' OR last_name LIKE ' . '"%' .  $last_name . '%"' .  ' OR deptId = :deptId';
+            $sql_table_data = 'SELECT * FROM emps WHERE first_name LIKE ' . '"%' . $first_name . '%"' . ' AND middle_name LIKE ' . '"%' .  $middle_name . '%"' .  ' AND last_name LIKE ' . '"%' .  $last_name . '%"' .  ' AND deptId = :deptId';
             $statement_all_table_data = $connection -> prepare($sql_table_data);
             if($statement_all_table_data -> execute([':deptId' => $deptId])){
                 $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);

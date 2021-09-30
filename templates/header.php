@@ -7,7 +7,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-3">
-                    <?php if($_COOKIE['username'] == ''): ?>
+                    <?php if(!isset($_COOKIE['username'])): ?>
                     <li class="nav-item">
                         <span class="nav-link">Гость</span>
                     </li>
