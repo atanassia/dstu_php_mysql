@@ -1,12 +1,14 @@
 <?php
-    require 'database/database.php';
-    
-    $message = "";
+    require 'templates/sessions.php';
 
-    if (isset($_POST['login']) && isset($_POST['password']) && isset($_POST['remember'])) {
+    require 'database/database.php';
+
+
+    if (isset($_POST['login']) && isset($_POST['password']) || isset($_POST['remember'])) {
 
         $login = $_POST["login"];
         $password = $_POST["password"];
+        $remember = $_POST['remember'];
 
         if(!empty($login) && !empty($password)){
             $sql_l = 'SELECT * FROM users WHERE login = :login AND password = :password';
@@ -30,17 +32,19 @@
                     }
                 }
 
-                require 'templates/sessions.php';
-                session_start();
                 $enter_site = false;
-                Logout();
-
-                if (count($_POST) > 0)
-                    $enter_site = Login($login, $status, $_POST['remember'] == 'on');
+                if (count($_POST) > 0){
+                    Logout();
+                    $enter_site = Login($login, $status, $remember, $password);
+                }
                 if($enter_site){
                     header("Location: /");
                     exit();
                 }
+                else{
+                    $messageServerErr = "Проблемы ан сервере.";
+                }
+
             }
             elseif(count($userdata) == 0){
                 $messageUserErr = "Пользователь не найден.";
@@ -86,12 +90,20 @@
                                 <h1 class="h3 mb-3 fw-normal">Авторизация</h1>
 
                                 <div class="form-floating mb-1">
-                                    <input type="login" name = "login" class="form-control" id="login" placeholder="login" required>
+                                    <?php if (isset($_COOKIE['USERNAME'])): ?>
+                                        <input type="login" name = "login" value = <?= $_COOKIE['USERNAME']; ?> class="form-control" id="login" placeholder="login" required>
+                                    <?php else: ?>
+                                        <input type="login" name = "login" class="form-control" id="login" placeholder="login" required>
+                                    <?php endif ?>
                                     <label for="login">Логин</label>
                                 </div>
 
                                 <div class="form-floating mb-1">
-                                    <input type="password" name = "password" class="form-control" id="password" placeholder="Пароль" required>
+                                    <?php if (isset($_COOKIE['PASSWORD'])): ?>
+                                        <input type="password" name = "password" value = <?= $_COOKIE['PASSWORD']; ?> class="form-control" id="password" placeholder="Пароль" required>
+                                    <?php else: ?>
+                                        <input type="password" name = "password" class="form-control" id="password" placeholder="Пароль" required>
+                                    <?php endif ?>
                                     <label for="password">Пароль</label>
                                 </div>
 
@@ -107,6 +119,12 @@
                     <?php if(!empty($messageUserErr)): ?>
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
                             <strong>Ошибка!</strong> <?= $messageUserErr; ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <?php endif; ?>
+                    <?php if(!empty($messageServerErr)): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Ошибка сервера.</strong> <?= $messageServerErr; ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>

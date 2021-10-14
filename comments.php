@@ -1,5 +1,5 @@
 <?php 
-    require 'templates/start_session.php';
+    session_start();
 
     $bookId = $_GET['bookId'];
 
@@ -15,8 +15,8 @@
     $statement_all_table_data_col -> execute();
     $books_comments = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
 
-    if(isset($_COOKIE['username'])){
-        $sql_user = 'SELECT id FROM users WHERE login = ' . '"' . $_COOKIE['username'] . '"';
+    if(isset($_SESSION['username'])){
+        $sql_user = 'SELECT id FROM users WHERE login = ' . '"' . $_SESSION['username'] . '"';
         $statement_user = $connection -> prepare($sql_user);
         $statement_user -> execute();
         $user_data = $statement_user -> fetchAll(PDO::FETCH_OBJ);
@@ -93,8 +93,8 @@
                                         <?php endforeach; ?>
                                     </div>  
                                 <?php endforeach; ?>
-                                <?php if(isset($_COOKIE['username'])): ?>
-                                    <?php if($_COOKIE['status'] == 1 or $_COOKIE['status'] == 0): ?>
+                                <?php if(isset($_SESSION['username'])): ?>
+                                    <?php if($_SESSION['status'] == 1 or $_SESSION['status'] == 0): ?>
                                         <div class="comment">
                                             <form method = "POST">
                                                 <div class="row">

@@ -1,8 +1,8 @@
 <?php
+    require 'templates/start_session.php';
     $message = "";
     $emailErr = $loginErr = $passwordErr = $cpasswordErr = "";
     $emailv = $passwordv = $cpasswordv = "";
-    $email = $login = $password = False;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //Validates email

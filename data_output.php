@@ -1,5 +1,5 @@
 <?php
-    require 'templates/start_session.php';
+    session_start();
     $table_name = $_GET['table_name'];
 
     require 'database/database.php';
@@ -8,11 +8,11 @@
         $sql_table_data = 'SELECT books.id, booksname, description, release_date, full_name, genrename FROM books 
                             JOIN authors on books.authorsId = authors.id
                             JOIN genres on books.genresId = genres.id';
-        $table_col_data = array('id', 'Название книги', 'Описание', 'Дата выпуска', 'Имя автора fk','Жанр fk');
+        $table_col_data = array('id', 'Название_книги', 'Описание', 'Дата_выпуска', 'Имя_автора_fk','Жанр_fk');
     }
     elseif($table_name == 'authors'){
         $sql_table_data = 'SELECT * From authors';
-        $table_col_data = array('id', 'Имя автора', 'Дата рождения', 'Дата смерти');
+        $table_col_data = array('id', 'Имя_автора', 'Дата_рождения', 'Дата_смерти');
     }
     elseif($table_name == 'depts'){
         $sql_table_data = 'SELECT * From depts';
@@ -21,7 +21,7 @@
     elseif($table_name == 'emps'){
         $sql_table_data = 'SELECT emps.id, first_name, middle_name, last_name, deptsname FROM emps 
                             JOIN depts on emps.deptId = depts.id';
-        $table_col_data = array('id', 'Имя', 'Отчество','Фамилия', 'Отдел fk');
+        $table_col_data = array('id', 'Имя', 'Отчество','Фамилия', 'Отдел_fk');
     }
     elseif($table_name == 'genres'){
         $sql_table_data = 'SELECT * From genres';
@@ -29,11 +29,11 @@
     }
     elseif($table_name == '1972_author_birthday'){
         $sql_table_data = 'SELECT * From 1972_author_birthday';
-        $table_col_data = array('id', 'Имя автора', 'Дата рождения', 'Дата смерти');
+        $table_col_data = array('id', 'Имя_автора', 'Дата_рождения', 'Дата_смерти');
     }
     elseif($table_name == 'names_a_authors'){
         $sql_table_data = 'SELECT * From names_a_authors';
-        $table_col_data = array('id', 'Имя автора', 'Дата рождения', 'Дата смерти');
+        $table_col_data = array('id', 'Имя_автора', 'Дата_рождения', 'Дата_смерти');
     }
     elseif($table_name == '2_1972_names_a'){
         $sql_table_data = 'SELECT * From 2_1972_names_a';
@@ -41,11 +41,11 @@
     }
     elseif($table_name == 'allbooks'){
         $sql_table_data = 'SELECT * From allbooks';
-        $table_col_data = array('id', 'Название книги', 'Описание', 'Дата выпуска','id автора','id жанра');
+        $table_col_data = array('id', 'Название_книги', 'Описание', 'Дата_выпуска','id_автора','id_жанра');
     }
     elseif($table_name == 'task_12'){
         $sql_table_data = 'SELECT * From task_12';
-        $table_col_data = array('Название','Имя автора','Жанр');
+        $table_col_data = array('Название','Имя_автора','Жанр');
     }
 
     $sql_table_data_col = 'SELECT id, genrename FROM genres';
@@ -58,9 +58,13 @@
     $statement_all_table_data_col -> execute();
     $authors_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
 
+    // прописываем запрос
     $sql_table_data_col = 'SELECT * FROM depts';
+    // Чтобы выполнить такой запрос, сначала его надо подготовить с помощью метода prepare(). Она также возвращает PDO statement, но ещё без данных. 
     $statement_all_table_data_col = $connection -> prepare($sql_table_data_col);
+    // через execute передаем массив переменных
     $statement_all_table_data_col -> execute();
+    // метод fetch(), который служит для последовательного получения строк из БД. 
     $depts_col_data = $statement_all_table_data_col -> fetchAll(PDO::FETCH_OBJ);
 
     $statement_all_table_data = $connection -> prepare($sql_table_data);
@@ -71,35 +75,35 @@
 
 <?php
     if ($table_name == 'books'){
-        if (isset ($_POST['Название книги']) && isset($_POST['Описание']) && isset($_POST['Дата выпуска']) && isset($_POST['Имя автора fk']) && isset($_POST['Жанр fk'])) {
-            $booksname = $_POST['Название книги'];
+        if (isset ($_POST['Название_книги']) && isset($_POST['Описание']) && isset($_POST['Дата_выпуска']) && isset($_POST['Имя_автора_fk']) && isset($_POST['Жанр_fk'])) {
+            $booksname = $_POST['Название_книги'];
             $description = $_POST['Описание'];
-            $release_date = $_POST['Дата выпуска'];
-            $authorsId = $_POST['Имя автора fk'];
-            $genresId = $_POST['Жанр fk'];
+            $release_date = $_POST['Дата_выпуска'];
+            $authorsId = $_POST['Имя_автора_fk'];
+            $genresId = $_POST['Жанр_fk'];
             $sql_table_data = 'SELECT books.id, booksname, description, release_date, full_name, genrename FROM books 
                     JOIN authors on books.authorsId = authors.id
                     JOIN genres on books.genresId = genres.id
-                    WHERE booksname LIKE ' . $booksname . ' OR description = :description OR release_date = :release_date OR authorsId = :authorsId OR genresId = :genresId';
+                    WHERE booksname LIKE "%' . $booksname . '%" OR description LIKE "%' . $description . '%" OR release_date = :release_date OR (authorsId = :authorsId AND genresId = :genresId)';
             $statement_all_table_data = $connection -> prepare($sql_table_data);
-            $statement_all_table_data->execute([':description' => $description, ':release_date' => $release_date, ':authorsId' => $authorsId, ':genresId' => $genresId]);
+            $statement_all_table_data->execute([':release_date' => $release_date, ':authorsId' => $authorsId, ':genresId' => $genresId]);
             $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);
         }
     }
-    elseif ($table_name == 'authors'){
-        if ((isset($_POST['Имя автора']) && isset($_POST['Дата рождения'])) && isset($_POST['Дата смерти'])) {
-            $full_name = $_POST['Имя автора'];
-            $birth_date = $_POST['Дата рождения'];
-            $death_date = $_POST['Дата смерти'];
-            if(empty($death_date)){
-                $sql_table_data = 'SELECT * From depts WHERE full_name LIKE ' . $full_name . ' AND birth_date = :birth_date AND death_date = :death_date';
+    elseif ($table_name == 'authors'){ 
+        if (isset($_POST['Имя_автора']) && (isset($_POST['Дата_рождения']) || isset($_POST['Дата_смерти']))){
+            $full_name = $_POST['Имя_автора'];
+            $birth_date = $_POST['Дата_рождения'];
+            $death_date = $_POST['Дата_смерти'];
+            if(!($death_date == "")){
+                $sql_table_data = 'SELECT * From authors WHERE full_name LIKE ' . '"%' . $full_name . '%"' . ' OR birth_date = :birth_date OR death_date = :death_date';
                 $statement_all_table_data = $connection -> prepare($sql_table_data);
                 if($statement_all_table_data -> execute([':birth_date' => $birth_date, ':death_date' => $death_date])){
-                    $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);   
+                    $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);  
                 }
             }
             else{
-                $sql_table_data = 'SELECT * From depts WHERE full_name LIKE ' . '"%' . $full_name . '%"' . ' AND birth_date = :birth_date';
+                $sql_table_data = 'SELECT * From authors WHERE full_name LIKE ' . '"%' . $full_name . '%"' . ' OR birth_date = :birth_date';
                 $statement_all_table_data = $connection -> prepare($sql_table_data);
                 if($statement_all_table_data -> execute([':birth_date' => $birth_date])){
                     $table_data = $statement_all_table_data -> fetchAll(PDO::FETCH_OBJ);
@@ -118,11 +122,11 @@
         }
     }
     elseif ($table_name == 'emps'){
-        if (isset($_POST['Имя']) && isset($_POST['Отчество']) && isset($_POST['Фамилия']) && isset($_POST['Отдел fk'])) {
+        if (isset($_POST['Имя']) && isset($_POST['Отчество']) && isset($_POST['Фамилия']) && isset($_POST['Отдел_fk'])) {
             $first_name = $_POST['Имя'];
             $middle_name = $_POST['Отчество'];
             $last_name = $_POST['Фамилия'];
-            $deptId = $_POST['Отдел fk'];
+            $deptId = $_POST['Отдел_fk'];
             $sql_table_data = 'SELECT * FROM emps WHERE first_name LIKE ' . '"%' . $first_name . '%"' . ' AND middle_name LIKE ' . '"%' .  $middle_name . '%"' .  ' AND last_name LIKE ' . '"%' .  $last_name . '%"' .  ' AND deptId = :deptId';
             $statement_all_table_data = $connection -> prepare($sql_table_data);
             if($statement_all_table_data -> execute([':deptId' => $deptId])){
@@ -168,33 +172,38 @@
                 </div>
 
                 <div class="col-9">
+                <?php if(!empty($message)): ?>
+                    <div class="alert alert-success">
+                        <?= $message; ?>
+                    </div>
+                <?php endif; ?>
                     <form method = "POST">
                         <div class="row mb-4 search_data">
                             <?php foreach($table_col_data as $column): ?>
                                 <?php if ($column == "id") continue; ?>
                                 <div class="col">
-                                    <?php if ($column == "Дата выпуска" or $column == "Дата рождения" or $column == "Дата смерти"): ?>
+                                    <?php if ($column == "Дата_выпуска" or $column == "Дата_рождения" or $column == "Дата_смерти"): ?>
                                         <label for="<?= $column; ?>" class="mt-3"><?= $column; ?></label>
-                                        <?php if ($column == "Дата смерти"): ?>
+                                        <?php if ($column == "Дата_смерти"): ?>
                                             <input type = "date" name="<?= $column; ?>" id="<?= $column; ?>" class="form-control">
                                         <?php else: ?>
-                                            <input type = "date" name="<?= $column; ?>" id="<?= $column; ?>" class="form-control" required>
+                                            <input type = "date" name="<?= $column; ?>" id="<?= $column; ?>" class="form-control" required> 
                                         <?php endif; ?>
-                                    <?php elseif($column == "Имя автора fk" or $column == "Жанр fk" or $column == "Отдел fk"): ?>
+                                    <?php elseif($column == "Имя_автора_fk" or $column == "Жанр_fk" or $column == "Отдел_fk"): ?>
                                         <label for="<?= $column; ?>" class="mt-3"><?= $column; ?></label>
-                                        <?php if ( $column == 'Жанр fk' ): ?>
+                                        <?php if ( $column == 'Жанр_fk' ): ?>
                                             <select name='<?= $column; ?>' id='<?= $column; ?>' class="form-select">
                                                     <?php foreach($genres_col_data as $genre_col): ?>
                                                         <option value="<?= $genre_col -> id; ?>"><?= $genre_col -> genrename; ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
-                                            <?php elseif ( $column == 'Имя автора fk' ): ?>
+                                            <?php elseif ( $column == 'Имя_автора_fk' ): ?>
                                                 <select name='<?= $column; ?>' id='<?= $column; ?>' class="form-select">
                                                     <?php foreach($authors_col_data as $author_col): ?>
                                                         <option value="<?= $author_col -> id; ?>"><?= $author_col -> full_name; ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
-                                            <?php elseif ( $column == 'Отдел fk' ): ?>
+                                            <?php elseif ( $column == 'Отдел_fk' ): ?>
                                                 <select name='<?= $column; ?>' id='<?= $column; ?>' class="form-select">
                                                     <?php foreach($depts_col_data as $dept_col): ?>
                                                         <option value="<?= $dept_col -> id; ?>"><?= $dept_col -> deptsname; ?></option>
@@ -221,8 +230,8 @@
                                 <?php endforeach; ?>
 
                                
-                                <?php if(isset($_COOKIE['status'])): ?>
-                                    <?php if($_COOKIE['status'] == 1): ?>
+                                <?php if(isset($_SESSION['status'])): ?>
+                                    <?php if($_SESSION['status'] == 1): ?>
                                         <td></td>
                                         <td></td>
                                     <?php endif ?>
@@ -240,8 +249,8 @@
                                         <td><?= $Row; ?></td>
                                     <?php endforeach; ?>
                                     
-                                    <?php if(isset($_COOKIE['status'])): ?>
-                                        <?php if($_COOKIE['status'] == 1): ?>
+                                    <?php if(isset($_SESSION['status'])): ?>
+                                        <?php if($_SESSION['status'] == 1): ?>
                                             <td>
                                                 <a href="edit.php?table_name=<?= $table_name; ?>&id=<?= $data->id ?>" class="btn btn_create_delete">
                                                     <img alt="" class="" src="/templates/icons/edit.svg">

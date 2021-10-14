@@ -1,5 +1,5 @@
 <?php
-    require 'templates/start_session.php';
+    session_start();
     $table_name = $_GET['table_name'];
 
     require 'database/database.php';

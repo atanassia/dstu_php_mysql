@@ -1,20 +1,26 @@
 <?php
-    function Login($login, $status, $remember){
+    function Login($login, $status, $remember, $password){
         if($login == '')
             return false;
-        $_SESSION['user'] = $login;
+        session_start();
+        $_SESSION['username'] = $login;
+        $_SESSION['status'] = $status;
 
-        if($remember){
-            setcookie('username', $login, time() + 3600 * 24 * 7, '/');
-            setcookie('status', $status, time() + 3600 * 24 * 7, '/');
+        if($remember != ""){
+            setcookie('USERNAME', $login, time() + 3600 * 24 * 7, '/');
+            setcookie('PASSWORD', $password, time() + 3600 * 24 * 7, '/');
+        }
+        else{
+            setcookie('USERNAME', $login, 1, '/');
+            setcookie('PASSWORD', $password, 1, '/');
         }
         return true;
     }
 
     function Logout(){
-        setcookie('username', '', time() - 1);
-        setcookie('status', '', time() - 1);
-        unset($_SESSION['user']);
-        header("Location: /");
+        session_start();
+        unset($_SESSION['username']);
+        unset($_SESSION['status']);
+        session_destroy();
     }
 ?>
